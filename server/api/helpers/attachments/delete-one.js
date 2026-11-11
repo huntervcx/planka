@@ -51,6 +51,20 @@ module.exports = {
       });
     }
 
+    if (inputs.record.id === inputs.card.thumbnailAttachmentId) {
+      await sails.helpers.cards.updateOne.with({
+        webhooks,
+        record: inputs.card,
+        values: {
+          thumbnailAttachmentId: null,
+        },
+        project: inputs.project,
+        board: inputs.board,
+        list: inputs.list,
+        actorUser: inputs.actorUser,
+      });
+    }
+
     const { attachment, uploadedFile } = await Attachment.qm.deleteOne(inputs.record.id);
 
     if (attachment) {

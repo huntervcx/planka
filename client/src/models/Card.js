@@ -78,6 +78,11 @@ export default class extends BaseModel {
       as: 'coverAttachment',
       relatedName: 'coveredCard',
     }),
+    thumbnailAttachmentId: fk({
+      to: 'Attachment',
+      as: 'thumbnailAttachment',
+      relatedName: 'thumbnailedCards',
+    }),
     users: many('User', 'cards'),
     labels: many('Label', 'cards'),
   };
@@ -647,6 +652,8 @@ export default class extends BaseModel {
       creatorUserId: this.creatorUserId,
       prevListId: this.prevListId,
       coverAttachmentId: this.coverAttachmentId && `${this.coverAttachmentId}-${rootId}`,
+      thumbnailAttachmentId:
+        this.thumbnailAttachmentId && `${this.thumbnailAttachmentId}-${rootId}`,
       type: this.type,
       position: this.position,
       name: this.name,

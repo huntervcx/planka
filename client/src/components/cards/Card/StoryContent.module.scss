@@ -103,4 +103,13 @@
       transform: scale(1.1) rotate(-2deg);
     }
   }
+
+  .thumbnail {
+    border-radius: 3px;
+    float: right;
+    height: 40px;
+    margin: 0 0 4px 8px;
+    object-fit: cover;
+    width: 40px;
+  }
 }

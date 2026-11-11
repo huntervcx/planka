@@ -267,6 +267,17 @@ module.exports = {
       }
     }
 
+    if (inputs.record.thumbnailAttachmentId) {
+      const nextThumbnailAttachmentId =
+        nextAttachmentIdByAttachmentId[inputs.record.thumbnailAttachmentId];
+
+      if (nextThumbnailAttachmentId) {
+        ({ card } = await Card.qm.updateOne(card.id, {
+          thumbnailAttachmentId: nextThumbnailAttachmentId,
+        }));
+      }
+    }
+
     const {
       customFieldGroups: nextCustomFieldGroups,
       customFields: nextCustomFields,

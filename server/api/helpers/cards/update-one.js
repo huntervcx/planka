@@ -43,6 +43,7 @@ module.exports = {
     listMustBeInValues: {},
     listInValuesMustBelongToBoard: {},
     coverAttachmentInValuesMustContainImage: {},
+    thumbnailAttachmentInValuesMustContainImage: {},
   },
 
   // TODO: use normalizeValues and refactor
@@ -102,6 +103,18 @@ module.exports = {
         delete values.coverAttachment;
       } else {
         values.coverAttachmentId = values.coverAttachment.id;
+      }
+    }
+
+    if (values.thumbnailAttachment) {
+      if (!values.thumbnailAttachment.data.image) {
+        throw 'thumbnailAttachmentInValuesMustContainImage';
+      }
+
+      if (values.thumbnailAttachment.id === inputs.record.thumbnailAttachmentId) {
+        delete values.thumbnailAttachment;
+      } else {
+        values.thumbnailAttachmentId = values.thumbnailAttachment.id;
       }
     }
 

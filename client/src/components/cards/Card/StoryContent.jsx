@@ -67,6 +67,11 @@ const StoryContent = React.memo(({ cardId }) => {
     return attachment && attachment.data.thumbnailUrls.outside360;
   });
 
+  const thumbnailUrl = useSelector((state) => {
+    const attachment = selectAttachmentById(state, card.thumbnailAttachmentId);
+    return attachment && attachment.data.thumbnailUrls.outside360;
+  });
+
   const descriptionText = useMemo(
     () => card.description && markdownToText(card.description),
     [card.description],
@@ -102,6 +107,7 @@ const StoryContent = React.memo(({ cardId }) => {
           </span>
         )}
         <div className={classNames(styles.name, card.isClosed && styles.nameClosed)}>
+          {thumbnailUrl && <img src={thumbnailUrl} alt="" className={styles.thumbnail} />}
           {card.name}
         </div>
         {card.description && <div className={styles.descriptionText}>{descriptionText}</div>}

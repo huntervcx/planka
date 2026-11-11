@@ -32,6 +32,10 @@ const ItemContent = React.forwardRef(({ id, onOpen }, ref) => {
     (state) => id === selectors.selectCurrentCard(state).coverAttachmentId,
   );
 
+  const isThumbnail = useSelector(
+    (state) => id === selectors.selectCurrentCard(state).thumbnailAttachmentId,
+  );
+
   const canEdit = useSelector((state) => {
     const { listId } = selectors.selectCurrentCard(state);
     const list = selectListById(state, listId);
@@ -79,6 +83,19 @@ const ItemContent = React.forwardRef(({ id, onOpen }, ref) => {
       );
     },
     [id, isCover, dispatch],
+  );
+
+  const handleToggleThumbnailClick = useCallback(
+    (event) => {
+      event.stopPropagation();
+
+      dispatch(
+        entryActions.updateCurrentCard({
+          thumbnailAttachmentId: isThumbnail ? null : id,
+        }),
+      );
+    },
+    [id, isThumbnail, dispatch],
   );
 
   const EditPopup = usePopupInClosableContext(EditStep);
@@ -152,6 +169,20 @@ const ItemContent = React.forwardRef(({ id, onOpen }, ref) => {
                         context: 'title',
                       })
                     : t('action.makeCover', {
+                        context: 'title',
+                      })}
+                </span>
+              </button>
+            )}
+            {attachment.data.image && canEdit && (
+              <button type="button" className={styles.option} onClick={handleToggleThumbnailClick}>
+                <Icon name="image outline" size="small" className={styles.optionIcon} />
+                <span className={styles.optionText}>
+                  {isThumbnail
+                    ? t('action.removeThumbnail', {
+                        context: 'title',
+                      })
+                    : t('action.makeThumbnail', {
                         context: 'title',
                       })}
                 </span>

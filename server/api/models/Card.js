@@ -23,6 +23,7 @@
  *         - creatorUserId
  *         - prevListId
  *         - coverAttachmentId
+ *         - thumbnailAttachmentId
  *         - type
  *         - position
  *         - name
@@ -63,6 +64,11 @@
  *           nullable: true
  *           description: ID of the attachment used as cover
  *           example: "1357158568008091269"
+ *         thumbnailAttachmentId:
+ *           type: string
+ *           nullable: true
+ *           description: ID of the image attachment used as thumbnail, independent of the cover
+ *           example: "1357158568008091270"
  *         type:
  *           type: string
  *           enum: [project, story]
@@ -228,6 +234,10 @@ module.exports = {
     coverAttachmentId: {
       model: 'Attachment',
       columnName: 'cover_attachment_id',
+    },
+    thumbnailAttachmentId: {
+      model: 'Attachment',
+      columnName: 'thumbnail_attachment_id',
     },
     subscriptionUsers: {
       collection: 'User',

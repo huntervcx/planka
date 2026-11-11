@@ -76,6 +76,11 @@ const ProjectContent = React.memo(({ cardId }) => {
     return attachment && attachment.data.thumbnailUrls.outside360;
   });
 
+  const thumbnailUrl = useSelector((state) => {
+    const attachment = selectAttachmentById(state, card.thumbnailAttachmentId);
+    return attachment && attachment.data.thumbnailUrls.outside360;
+  });
+
   const { listName, withCreator, withAge } = useSelector((state) => {
     const board = selectors.selectCurrentBoard(state);
 
@@ -148,7 +153,10 @@ const ProjectContent = React.memo(({ cardId }) => {
 
   return (
     <div className={styles.wrapper}>
-      <div className={classNames(styles.name, card.isClosed && styles.nameClosed)}>{card.name}</div>
+      <div className={classNames(styles.name, card.isClosed && styles.nameClosed)}>
+        {thumbnailUrl && <img src={thumbnailUrl} alt="" className={styles.thumbnail} />}
+        {card.name}
+      </div>
       {coverUrl && (
         <div className={styles.coverWrapper}>
           <img src={coverUrl} alt="" className={styles.cover} />

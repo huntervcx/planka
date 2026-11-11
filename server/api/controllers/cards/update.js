@@ -40,6 +40,11 @@
  *                 nullable: true
  *                 description: ID of the attachment used as cover
  *                 example: "1357158568008091267"
+ *               thumbnailAttachmentId:
+ *                 type: string
+ *                 nullable: true
+ *                 description: ID of the image attachment used as thumbnail (independent of the cover)
+ *                 example: "1357158568008091268"
  *               type:
  *                 type: string
  *                 enum: [project, story]
@@ -136,11 +141,17 @@ const Errors = {
   COVER_ATTACHMENT_NOT_FOUND: {
     coverAttachmentNotFound: 'Cover attachment not found',
   },
+  THUMBNAIL_ATTACHMENT_NOT_FOUND: {
+    thumbnailAttachmentNotFound: 'Thumbnail attachment not found',
+  },
   LIST_MUST_BE_PRESENT: {
     listMustBePresent: 'List must be present',
   },
   COVER_ATTACHMENT_MUST_CONTAIN_IMAGE: {
     coverAttachmentMustContainImage: 'Cover attachment must contain image',
+  },
+  THUMBNAIL_ATTACHMENT_MUST_CONTAIN_IMAGE: {
+    thumbnailAttachmentMustContainImage: 'Thumbnail attachment must contain image',
   },
   POSITION_MUST_BE_PRESENT: {
     positionMustBePresent: 'Position must be present',
@@ -156,6 +167,10 @@ module.exports = {
     boardId: idInput,
     listId: idInput,
     coverAttachmentId: {
+      ...idInput,
+      allowNull: true,
+    },
+    thumbnailAttachmentId: {
       ...idInput,
       allowNull: true,
     },
@@ -213,10 +228,16 @@ module.exports = {
     coverAttachmentNotFound: {
       responseType: 'notFound',
     },
+    thumbnailAttachmentNotFound: {
+      responseType: 'notFound',
+    },
     listMustBePresent: {
       responseType: 'unprocessableEntity',
     },
     coverAttachmentMustContainImage: {
+      responseType: 'unprocessableEntity',
+    },
+    thumbnailAttachmentMustContainImage: {
       responseType: 'unprocessableEntity',
     },
     positionMustBePresent: {
@@ -249,6 +270,7 @@ module.exports = {
         'boardId',
         'listId',
         'coverAttachmentId',
+        'thumbnailAttachmentId',
         'type',
         'position',
         'name',
@@ -307,8 +329,20 @@ module.exports = {
       }
     }
 
+    let nextThumbnailAttachment;
+    if (inputs.thumbnailAttachmentId) {
+      nextThumbnailAttachment = await Attachment.qm.getOneById(inputs.thumbnailAttachmentId, {
+        cardId: card.id,
+      });
+
+      if (!nextThumbnailAttachment || nextThumbnailAttachment.type !== Attachment.Types.FILE) {
+        throw Errors.THUMBNAIL_ATTACHMENT_NOT_FOUND;
+      }
+    }
+
     const values = _.pick(inputs, [
       'coverAttachmentId',
+      'thumbnailAttachmentId',
       'type',
       'position',
       'name',
@@ -331,6 +365,7 @@ module.exports = {
           board: nextBoard,
           list: nextList,
           coverAttachment: nextCoverAttachment,
+          thumbnailAttachment: nextThumbnailAttachment,
         },
         actorUser: currentUser,
         request: this.req,
@@ -340,6 +375,10 @@ module.exports = {
       .intercept(
         'coverAttachmentInValuesMustContainImage',
         () => Errors.COVER_ATTACHMENT_MUST_CONTAIN_IMAGE,
+      )
+      .intercept(
+        'thumbnailAttachmentInValuesMustContainImage',
+        () => Errors.THUMBNAIL_ATTACHMENT_MUST_CONTAIN_IMAGE,
       );
 
     if (!card) {
